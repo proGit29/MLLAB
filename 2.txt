@@ -1,0 +1,52 @@
+# //Data Visualization
+# //Packages Import
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# //Data Import
+
+data = pd.read_csv("xyz_data.csv")
+X = data['X']
+Y = data['Y']
+Z = data['Z']
+
+# //Scatter Plot
+
+plt.scatter(X,Y)
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Scatter Plot')
+# Text(0.5, 1.0, 'Scatter Plot')
+
+# //Box Plot
+
+sns.boxplot(data=data)
+plt.title('Box Plot')
+# Text(0.5, 1.0, 'Box Plot')
+
+# //Heat Map
+
+sns.heatmap(data.corr(),annot=True,cmap='coolwarm')
+plt.title('Heat Map')
+# Text(0.5, 1.0, 'Heat Map')
+
+# //Contour Plot
+
+plt.tricontour(X,Y,Z,cmap='jet')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Contour Plot')
+# Text(0.5, 1.0, 'Countour Plot')
+
+# //3D Surface Plot
+
+ax = plt.axes(projection="3d")
+ax.plot_trisurf(X,Y,Z,cmap='jet_r')
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_title('3D Surface Plot')
+# Text(0.5, 0.92, '3D Surface Plot')
+

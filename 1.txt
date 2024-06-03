@@ -1,0 +1,164 @@
+def search(data):
+    x = input("Enter search element: ")
+    if x in data:
+        print(f"Element found at {data.index(x)}")
+    else:
+        print("Element not Found!!")
+
+def sort(data):
+    data.sort()
+
+def update(data, key):
+    if key not in data:
+        print("Key not found")
+    else:
+        data[key] = input("Enter a new value: ")
+
+def list_op():
+    list_ = []
+    while True:
+        ch = int(input("1.Insert\n2.Delete\n3.Update\n4.Search\n5.Sort\n6.Display\n7.Return to main\nEnter choice: "))
+        if ch == 1:
+            list_.append(input("Enter element: "))
+        elif ch == 2:
+            ele = input("Enter element to be deleted: ")
+            try:
+                list_.remove(ele)
+            except ValueError:
+                print(f"Element {ele} not found")
+        elif ch == 3:
+            index = int(input("Enter index: "))
+            update(list_, index)
+        elif ch == 4:
+            search(list_)
+        elif ch == 5:
+            sort(list_)
+        elif ch == 6:
+            print(list_)
+        elif ch == 7:
+            break
+        else:
+            print("Invalid choice")
+
+def tuple_op():
+    tup = tuple(input("Enter tuple elements separated by space: ").split())
+    while True:
+        ch = int(input("1.Display\n2.Search\n3.Exit\nEnter choice: "))
+        if ch == 1:
+            print(tup)
+        elif ch == 2:
+            search(tup)
+        elif ch == 3:
+            break
+        else:
+            print("Invalid choice")
+
+def set_op():
+    myset = set()
+    while True:
+        ch = int(input("1.Add\n2.Remove\n3.Search\n4.Display\n5.Exit\nEnter choice: "))
+        if ch == 1:
+            myset.add(input("Enter element: "))
+        elif ch == 2:
+            myset.discard(input("Enter element: "))
+        elif ch == 3:
+            search(myset)
+        elif ch == 4:
+            print(myset)
+        elif ch == 5:
+            break
+        else:
+            print("Invalid choice")
+
+def dict_op():
+    dict_ = {}
+    while True:
+        ch = int(input("1.Insert\n2.Update\n3.Delete\n4.Search\n5.Display\n6.Exit\nEnter choice: "))
+        if ch == 1:
+            dict_[input("Enter key: ")] = input("Enter value: ")
+        elif ch == 2:
+            update(dict_, input("Enter key: "))
+        elif ch == 3:
+            dict_.pop(input("Enter key to be deleted: "), print("Key not found"))
+        elif ch == 4:
+            ele = input("Enter value: ")
+            for key, value in dict_.items():
+                if value == ele:
+                    print(key)
+        elif ch == 5:
+            print(dict_)
+        elif ch == 6:
+            break
+        else:
+            print("Invalid choice")
+
+while True:
+    ch = int(input("1.List\n2.Tuple\n3.Set\n4.Dictionary\n5.Exit\nEnter choice: "))
+    if ch == 1:
+        list_op()
+    elif ch == 2:
+        tuple_op()
+    elif ch == 3:
+        set_op()
+    elif ch == 4:
+        dict_op()
+    elif ch == 5:
+        break
+    else:
+        print("Invalid choice")
+
+
+
+1.List
+2.Tuples
+3.Set
+4.Dictonary
+5.Exit
+Enter choice: 4
+1.Insert
+2.Update
+3.Delete
+4.Search
+5.Display
+6.exit
+Enter your choice1
+Enter key: 5
+Enter value: 6
+Enter your choice1
+Enter key: 14
+Enter value: 02
+Enter your choice1
+Enter key: 22
+Enter value: 11
+Enter your choice1
+Enter key: 19
+Enter value: 10
+Enter your choice1
+Enter key: 13
+Enter value: 10
+Enter your choice5
+{'5': '6', '14': '02', '22': '11', '19': '10', '13': '10'}
+Enter your choice2
+Enter the key: 5
+Enter a new value: 15
+Enter your choice5
+{'5': '15', '14': '02', '22': '11', '19': '10', '13': '10'}
+Enter your choice3
+Enter key to be deleted: 5
+Enter your choice6
+1.List
+2.Tuples
+3.Set
+4.Dictonary
+5.Exit
+Enter choice: 4
+1.Insert
+2.Update
+3.Delete
+4.Search
+5.Display
+6.exit
+Enter your choice5
+{'14': '02', '22': '11', '19': '10', '13': '10'}
+Enter your choice4
+Enter value: 10
