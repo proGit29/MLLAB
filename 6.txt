@@ -1,0 +1,98 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier as KNN
+from sklearn.metrics import accuracy_score
+glass_data=pd.read_csv("glass.csv")
+fruit_data=pd.read_csv("fruits.csv")
+
+datasets=['Glass','Fruit']
+Xg = glass_data.drop('Type',axis=1).values
+yg = glass_data['Type'].values
+Xf = fruit_data[['mass','width','height','color_score']].values
+yf = fruit_data['fruit_label'].values
+k_values=[3,5,7]
+distance_metrics= ['manhattan','euclidean']
+test_splits = [0.1,0.3]
+for dataset in datasets:
+    print(f"Datasets:{dataset}")
+    for k in k_values:
+        for p,distance_metric in enumerate(distance_metrics):
+            for ts in test_splits:
+                print(f"K={k},Distance Metric={distance_metric}: ")
+                print(f"Split = {ts}")
+                knn=KNN(n_neighbors=k,p=p+1,weights="distance")
+                if dataset == 'Glass':
+                    X_train,X_test, y_train,y_test=train_test_split(Xg,yg,test_size=ts,random_state=42)
+                else:
+                    X_train,X_test, y_train,y_test=train_test_split(Xf,yf,test_size=ts,random_state=42)
+                knn.fit(X_train,y_train)
+                accuracy=knn.score(X_test,y_test)
+                print(f"accuracy on test set: {accuracy:.2f}")
+                print("------------")
+            print("----------------------------")
+    print("------------------------------------------------")
+
+
+
+
+
+///
+import numpy as np
+from collections import Counter 
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris,load_wine
+from sklearn.metrics import accuracy_score
+
+class KNN:
+    def __init__(self,k=3,distance_metric='euclidean'):
+        self.k=k
+        self.distance_metric=distance_metric
+    def calculate_distance(self,x1,x2):
+        if self.distance_metric=='euclidean':
+            return np.linalg.norm(x1-x2)
+        elif self.distance_metric=='manhattan':
+            return np.sum(np.abs(x1-x2))
+        else:
+            raise ValueError("Invalid distance metric")
+    def fit(self,X_train,y_train):
+        self.X_train=X_train
+        self.y_train=y_train
+    def predict(self,X_test):
+        predictions=[]
+        for x in X_test:
+            distance=[self.calculate_distance(x,x_train)for x_train in self.X_train]
+            k_indices=np.argsort(distance)[:self.k]
+            k_nearest_labels=[self.y_train[i]for i in k_indices]
+            most_common=Counter(k_nearest_labels).most_common(1)
+            predictions.append(most_common[0][0])
+        return predictions
+
+import pandas as pd
+glass_data=pd.read_csv("glass.csv")
+fruit_data=pd.read_csv("fruits.csv")
+
+datasets=['Glass','Fruit']
+Xg = glass_data.drop('Type',axis=1).values
+yg = glass_data['Type'].values
+Xf = fruit_data[['mass','width','height','color_score']].values
+yf = fruit_data['fruit_label'].values
+k_values=[3,5,7]
+distance_metrics= ['euclidean','manhattan']
+test_splits = [0.1,0.3]
+for dataset in datasets:
+    print(f"Datasets:{dataset}")
+    for k in k_values:
+        for distance_metric in distance_metrics:
+            for ts in test_splits:
+                print(f"K={k},Distance Metric={distance_metric}: ")
+                print(f"Split = {ts}")
+                knn=KNN(k=k,distance_metric=distance_metric)
+                if dataset == 'Glass':
+                    X_train,X_test, y_train,y_test=train_test_split(Xg,yg,test_size=ts,random_state=42)
+                else:
+                    X_train,X_test, y_train,y_test=train_test_split(Xf,yf,test_size=ts,random_state=42)
+                knn.fit(X_train,y_train)
+                y_pred=knn.predict(X_test)
+                accuracy=accuracy_score(y_test,y_pred)
+                print(f"accuracy on test set: {accuracy:.2f}")
+                print("------------")
