@@ -1,0 +1,100 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split,cross_val_score
+from sklearn.metrics import accuracy_score
+from sklearn.naive_bayes import GaussianNB as Classifier
+from seaborn import load_dataset
+def evaluate_naive_bayes(dataset,target_col,K_values):
+    for K in K_values:
+        x_train,x_test,y_train,y_test=train_test_split(dataset.drop(columns=[target_col]),dataset[target_col],test_size=(1-K/10),random_state=42)
+        Clf=Classifier()
+        Clf.fit(x_train.values,y_train.values)
+        y_pred=Clf.predict(x_test.values)
+        accuracy=accuracy_score(y_test,y_pred)
+        print(f"Split {K*10}-{100-K*10} Accuracy:{accuracy:.2f}")
+
+iris_data = load_dataset('iris')
+titanic_data=pd.read_csv('titanic.csv')
+titanic_data=titanic_data.drop(columns=['PassengerId','Name','Ticket','Cabin'])
+titanic_data['Age'].fillna(titanic_data['Age'].median(),inplace=True)
+titanic_data['Embarked'].fillna(titanic_data['Embarked'].mode()[0],inplace=True)
+titanic_data=pd.get_dummies(titanic_data,columns=['Sex','Embarked'])
+print("Iris Dataset Naive Bayes Classifier Results")
+evaluate_naive_bayes(iris_data,'species',[3,5,7,9])
+
+print("\nTitanic dataset Naive Bayes Classifier Results: ")
+evaluate_naive_bayes(titanic_data,'Survived',[3,5,7,9])
+
+
+
+
+
+
+//////////////////////////////
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split,cross_val_score
+from sklearn.metrics import accuracy_score
+
+class NaiveBayesclassifier:
+    def __init__(self):
+        self.class_probabilities={}
+        self.feature_probabilities={}
+    def fit(self,x,y):
+        n_samples,n_features=x.shape
+        classes=np.unique(y)
+        for class_label in classes:
+            class_indices=np.where(y==class_label)
+            class_probability=len(class_indices[0])/n_samples
+            self.class_probabilities[class_label]=class_probability
+            class_data=x[class_indices]
+            feature_probabilities={}
+            for feature in range(n_features):
+                unique_values,counts=np.unique(class_data[:,feature],return_counts=True)
+                feature_probabilities[feature]={'value':unique_values,'probabilities':counts/len(class_indices[0])}
+            self.feature_probabilities[class_label]=feature_probabilities
+    def predict(self,x):
+        predictons=[]
+        for sample in x:
+            max_prob=-1
+            predicted_class=None
+            for class_label,class_probability in self.class_probabilities.items():
+                posterior=class_probability
+                for feature,feature_value in enumerate(sample):
+                    if feature_value in self.feature_probabilities[class_label][feature]['value']:
+                        feature_probability_index=np.where(self.feature_probabilities[class_label][feature]['value']==feature_value)[0][0]
+                        feature_probability=self.feature_probabilities[class_label][feature]['probabilities'][feature_probability_index]
+                        posterior*=feature_probability
+                    else:
+                        posterior*=0.01
+                if posterior>max_prob:
+                    max_prob=posterior
+                    predicted_class=class_label
+            predictons.append(predicted_class)
+        return predictons
+    
+def evaluate_naive_bayes(dataset,target_col,K_values):
+    for K in K_values:
+        print(f"\nResults for K={K}")
+        x_train,x_test,y_train,y_test=train_test_split(dataset.drop(columns=[target_col]),dataset[target_col],test_size=(1-K/10),random_state=42)
+        Clf=NaiveBayesclassifier()
+        Clf.fit(x_train.values,y_train.values)
+        y_pred=Clf.predict(x_test.values)
+        accuracy=accuracy_score(y_test,y_pred)
+        print(f"Split {K*10}-{100-K*10} Accuracy:{accuracy:.2f}")
+
+iris_data=pd.read_csv('iris.csv')
+titanic_data=pd.read_csv('titanic.csv')
+
+titanic_data=titanic_data.drop(columns=['PassengerId','Name','Ticket','Cabin'])
+titanic_data['Age'].fillna(titanic_data['Age'].median(),inplace=True)
+titanic_data['Embarked'].fillna(titanic_data['Embarked'].mode()[0],inplace=True)
+titanic_data=pd.get_dummies(titanic_data,columns=['Sex','Embarked'])
+titanic_data.head(6)
+
+print("Iris Dataset Naive Bayes Classifier Results")
+evaluate_naive_bayes(iris_data,'Species',[3,5,7,9])
+
+print("\nTitanic dataset Naive Bayes Classifier Results: ")
+evaluate_naive_bayes(titanic_data,'Survived',[3,5,7,9])
